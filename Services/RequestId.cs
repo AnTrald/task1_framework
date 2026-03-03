@@ -8,14 +8,14 @@ namespace Pr1.MinWebService.Services;
 /// </summary>
 public static class RequestId
 {
-    private const string ItemKey = "request_id";
+    private const string EquipmentKey = "request_id";
     private const string HeaderName = "X-Request-Id";
 
-    private static readonly Regex Allowed = new("^[a-zA-Z0-9\-]{1,64}$", RegexOptions.Compiled);
+    private static readonly Regex Allowed = new(@"^[a-zA-Z0-9-]{1,64}$", RegexOptions.Compiled);
 
     public static string GetOrCreate(HttpContext context)
     {
-        if (context.Items.TryGetValue(ItemKey, out var existing) && existing is string s && s.Length > 0)
+        if (context.Items.TryGetValue(EquipmentKey, out var existing) && existing is string s && s.Length > 0)
             return s;
 
         var candidate = context.Request.Headers[HeaderName].FirstOrDefault();
@@ -23,7 +23,7 @@ public static class RequestId
             ? candidate!
             : Guid.NewGuid().ToString("N");
 
-        context.Items[ItemKey] = requestId;
+        context.Items[EquipmentKey] = requestId;
         context.Response.Headers[HeaderName] = requestId;
 
         return requestId;
